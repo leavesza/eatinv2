@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "958315599152",
+    "firebase_url": "https://eatinv2.firebaseio.com",
+    "project_id": "eatinv2",
+    "storage_bucket": "eatinv2.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:958315599152:android:c522ba81864e8fddda64f5",
+        "android_client_info": {
+          "package_name": "com.eatin.eatinv2"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "958315599152-tfpjjm69d96gjv868fop94169iguf3li.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBGHynS83v48SgmpMC6JvOQnhNcp6gcPaY"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "958315599152-tfpjjm69d96gjv868fop94169iguf3li.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
