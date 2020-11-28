@@ -6,6 +6,6 @@ import retrofit2.http.GET;
 import retrofit2.http.Query;
 
 public interface ICloudFunctions {
-    @GET("")
+    @GET("helloworld")
     Observable<ResponseBody> getCustomToken(@Query("access_token") String accessToken);
 }
