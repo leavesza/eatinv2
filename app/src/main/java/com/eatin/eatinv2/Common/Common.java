@@ -1,5 +1,12 @@
 package com.eatin.eatinv2.Common;
 
+import android.graphics.Typeface;
+import android.text.SpannableString;
+import android.text.SpannableStringBuilder;
+import android.text.Spanned;
+import android.text.style.StyleSpan;
+import android.widget.TextView;
+
 import com.eatin.eatinv2.Model.AddonModel;
 import com.eatin.eatinv2.Model.CategoryModel;
 import com.eatin.eatinv2.Model.FoodModel;
@@ -55,5 +62,16 @@ public class Common {
                 result+=addonModel.getPrice();
             return result;
         }
+    }
+
+    public static void setSpanString(String welcome, String name, TextView textView) {
+        SpannableStringBuilder builder = new SpannableStringBuilder();
+        builder.append(welcome);
+        SpannableString spannableString = new SpannableString(name);
+        StyleSpan boldSpan = new StyleSpan(Typeface.BOLD);
+        spannableString.setSpan(boldSpan,0,name.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+        builder.append(spannableString);
+        textView.setText(builder,TextView.BufferType.SPANNABLE);
+
     }
 }

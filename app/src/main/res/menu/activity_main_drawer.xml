@@ -3,30 +3,33 @@
     xmlns:tools="http://schemas.android.com/tools"
     tools:showIn="navigation_view">
 
-    <group android:checkableBehavior="single">
+    <group android:id="@+id/home_group">
         <item
             android:id="@+id/nav_home"
-            android:icon="@drawable/ic_menu_camera"
+            android:icon="@drawable/ic_baseline_home_24"
             android:title="@string/menu_home" />
+    </group >
+
+    <group android:id="@+id/category_group">
         <item
             android:id="@+id/nav_menu"
-            android:icon="@drawable/ic_menu_gallery"
+            android:icon="@drawable/ic_baseline_restaurant_menu_24"
             android:title="@string/menu_menu" />
 
-        <item
-            android:id="@+id/nav_food_list"
-            android:icon="@drawable/ic_baseline_fastfood_24"
-            android:title="@string/menu_food_list"/>
+</group>
+    <group android:id="@+id/cart_group">
+    <item
+        android:id="@+id/nav_cart"
+        android:icon="@drawable/ic_baseline_shopping_cart_24"
+        android:title="@string/menu_cart"/>
     </group>
 
-    <item android:title="Communicate">
-        <menu>
-            <item
-                android:id="@+id/nav_cart"
-                android:icon="@drawable/ic_baseline_shopping_cart_24"
-                android:title="@string/menu_cart">
+    <group android:id="@+id/user_group">
+        <item
+            android:id="@+id/nav_sign_out"
+            android:icon="@drawable/ic_baseline_exit_to_app_24"
+            android:title="@string/sign_out"/>
+    </group>
 
-            </item>
-        </menu>
-    </item>
+
 </menu>

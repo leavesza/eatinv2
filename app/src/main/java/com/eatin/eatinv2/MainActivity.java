@@ -2,9 +2,9 @@ package com.eatin.eatinv2;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
-import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
@@ -50,7 +50,7 @@ public class MainActivity extends AppCompatActivity {
     private static int APP_REQUEST_CODE = 7171;
     private FirebaseAuth firebaseAuth;
     private FirebaseAuth.AuthStateListener listener;
-    private AlertDialog dialog;
+    private android.app.AlertDialog dialog;
     private CompositeDisposable compositeDisposable = new CompositeDisposable();
     private ICloudFunctions cloudFunctions;
     private List<AuthUI.IdpConfig> providers;
@@ -65,7 +65,7 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     protected void onStop() {
-        if (listener != null)
+        if(listener != null)
             firebaseAuth.removeAuthStateListener(listener);
         compositeDisposable.clear();
         super.onStop();
@@ -80,33 +80,25 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void init() {
+        userRef = FirebaseDatabase.getInstance().getReference(Common.USER_REFERENCES);
+        firebaseAuth = FirebaseAuth.getInstance();
         dialog = new SpotsDialog.Builder().setCancelable(false).setContext(this).build();
         providers = Arrays.asList(new AuthUI.IdpConfig.PhoneBuilder().build());
-
-
-        firebaseAuth = firebaseAuth.getInstance();
-        userRef = FirebaseDatabase.getInstance().getReference(Common.USER_REFERENCES);
-        dialog = new SpotsDialog.Builder().setCancelable(false).setContext(this).build();
-        cloudFunctions = RetrofitCloudClient.getInstance().create(ICloudFunctions.class);
-
-        listener = new FirebaseAuth.AuthStateListener() {
-            @Override
-            public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
-                FirebaseUser user = firebaseAuth.getCurrentUser();
-                if(user != null)
-                {
-                    Toast.makeText(MainActivity.this, "already logged in", Toast.LENGTH_SHORT).show();
-                }
-                else
-                {
-                    phoneLogin();
-                }
+        listener = firebaseAuth -> {
+            FirebaseUser user = firebaseAuth.getCurrentUser();
+            if(user != null)
+            {
+                //Toast.makeText(MainActivity.this, "already logged in", Toast.LENGTH_SHORT).show();
+                checkUserFromFirebase(user);
+            }
+            else
+            {
+                phoneLogin();
             }
         };
     }
 
     private void checkUserFromFirebase(FirebaseUser user) {
-        Log.d(TAG,"in checkuserfromfb method");
         dialog.show();
         Log.d(TAG,"dialog shown");
         userRef.child(user.getUid())
@@ -213,10 +205,13 @@ public class MainActivity extends AppCompatActivity {
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == APP_REQUEST_CODE) {
             IdpResponse response = IdpResponse.fromResultIntent(data);
-            if (resultCode == RESULT_OK) {
+            if (resultCode == RESULT_OK)
+            {
                 FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
                 Log.d(TAG,"result code was ok");
-            } else {
+            }
+            else
+                {
                 Toast.makeText(this, "Failed to sign in !", Toast.LENGTH_SHORT).show();
                 Log.d(TAG,"failed to sign in");
             }
