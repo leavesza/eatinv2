@@ -321,14 +321,14 @@ public class FoodDetailFragment extends Fragment {
                         foodModel.setRatingCount(0l);
                     double sumRating = foodModel.getRatingValue()+ratingValue;
                     long ratingCount = foodModel.getRatingCount()+1;
-                    double result = sumRating/ratingCount;
+
 
                     Map<String,Object> updateData = new HashMap<>();
-                    updateData.put("ratingValue",result);
+                    updateData.put("ratingValue",sumRating);
                     updateData.put("ratingCount",ratingCount);
 
                     //update data in variable
-                    foodModel.setRatingValue(result);
+                    foodModel.setRatingValue(sumRating);
                     foodModel.setRatingCount(ratingCount);
 
                     snapshot.getRef()

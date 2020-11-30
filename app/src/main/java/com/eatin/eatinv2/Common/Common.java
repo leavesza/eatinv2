@@ -16,6 +16,7 @@ import com.eatin.eatinv2.Model.UserModel;
 import java.math.RoundingMode;
 import java.text.DecimalFormat;
 import java.util.List;
+import java.util.Random;
 
 public class Common {
     public static final String USER_REFERENCES = "Users";
@@ -25,6 +26,7 @@ public class Common {
     public static final int FULL_WIDTH_COLUMN = 1;
     public static final String CATEGORY_REF = "Category";
     public static final String COMMENT_REF = "Comments";
+    public static final String ORDER_REF = "Order";
     public static UserModel currentUser;
     public static CategoryModel categorySelected;
     public static FoodModel selectedFood;
@@ -73,5 +75,12 @@ public class Common {
         builder.append(spannableString);
         textView.setText(builder,TextView.BufferType.SPANNABLE);
 
+    }
+
+    public static String createOrderNumber() {
+        return new StringBuilder()
+                .append(System.currentTimeMillis()) //get current time in millisecond
+                .append(Math.abs(new Random().nextInt())) //add random number to block same order at same time
+                .toString();
     }
 }

@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:padding="8dp"
+    android:background="@android:color/white">
+
+    <com.google.android.material.textfield.TextInputLayout
+        android:fontFamily="@font/brandon_medium"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <EditText
+            android:id="@+id/edit_address"
+            android:hint="Enter your address"
+            android:fontFamily="@font/brandon_medium"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"/>
+
+
+
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <TextView
+        android:text="Delivery Method"
+        android:fontFamily="@font/brandon_medium"
+        android:textSize="22sp"
+        android:textStyle="bold"
+        android:textColor="@color/dialog_header_color"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"/>
+
+    <RadioGroup
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <RadioButton
+            android:id="@+id/rdi_home_address"
+            android:checked="true"
+            android:text="Takeaway"
+            android:fontFamily="@font/brandon_medium"
+            android:textSize="10sp"
+            android:textStyle="italic"
+            android:textColor="@color/dialog_text_color"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"/>
+
+        <RadioButton
+            android:id="@+id/rdi_other_address"
+            android:text="Other"
+            android:fontFamily="@font/brandon_medium"
+            android:textSize="10sp"
+            android:textStyle="italic"
+            android:textColor="@color/dialog_text_color"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"/>
+
+        <RadioButton
+            android:id="@+id/rdi_ship_this_address"
+            android:text="This"
+            android:fontFamily="@font/brandon_medium"
+            android:textSize="10sp"
+            android:textStyle="italic"
+            android:textColor="@color/dialog_text_color"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            />
+
+
+    </RadioGroup>
+
+    <TextView
+        android:text="Payment Method"
+        android:fontFamily="@font/brandon_medium"
+        android:textSize="22sp"
+        android:textStyle="bold"
+        android:textColor="@color/dialog_header_color"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"/>
+
+    <RadioGroup
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <RadioButton
+            android:id="@+id/rdi_cod"
+            android:checked="true"
+            android:text="Cash On Deliver"
+            android:fontFamily="@font/brandon_medium"
+            android:textSize="10sp"
+            android:textStyle="italic"
+            android:textColor="@color/dialog_text_color"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"/>
+
+        <RadioButton
+            android:id="@+id/rdi_braintree"
+            android:checked="true"
+            android:text="Braintree(CARD)"
+            android:fontFamily="@font/brandon_medium"
+            android:textSize="10sp"
+            android:textStyle="italic"
+            android:textColor="@color/dialog_text_color"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"/>
+
+
+    </RadioGroup>
+
+</LinearLayout>

@@ -176,8 +176,6 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
     }
 
     //EventBus
-
-
     @Override
     protected void onStart() {
         super.onStart();
