@@ -20,6 +20,7 @@ import com.eatin.eatinv2.EventBus.CategoryClick;
 import com.eatin.eatinv2.EventBus.CounterCartEvent;
 import com.eatin.eatinv2.EventBus.FoodItemClick;
 import com.eatin.eatinv2.EventBus.HideFABCart;
+import com.eatin.eatinv2.EventBus.MenuItemBack;
 import com.eatin.eatinv2.EventBus.PopularCategoryClick;
 import com.eatin.eatinv2.Model.CategoryModel;
 import com.eatin.eatinv2.Model.FoodModel;
@@ -62,6 +63,8 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
     private CartDataSource cartDataSource;
     android.app.AlertDialog dialog;
 
+    int menuClickId =-1;
+
     @BindView(R.id.fab)
     CounterFab fab;
 
@@ -90,13 +93,13 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
         FloatingActionButton fab = findViewById(R.id.fab);
         fab.setOnClickListener(view ->
                 navController.navigate(R.id.nav_cart));
-        drawer = findViewById(R.id.drawer_layout);
+        DrawerLayout drawer = findViewById(R.id.drawer_layout);
         NavigationView navigationView = findViewById(R.id.nav_view);
         // Passing each menu ID as a set of Ids because each
         // menu should be considered as top level destinations.
         mAppBarConfiguration = new AppBarConfiguration.Builder(
-                R.id.nav_home, R.id.nav_menu, R.id.nav_food_detail, R.id.nav_food_list,
-                R.id.nav_cart)
+                R.id.nav_home, R.id.nav_menu, R.id.nav_cart,
+                R.id.nav_view_orders,R.id.nav_sign_out)
                 .setDrawerLayout(drawer)
                 .build();
         navController = Navigation.findNavController(this, R.id.nav_host_fragment);
@@ -107,7 +110,7 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
 
         View headerView = navigationView.getHeaderView(0);
         TextView txt_user = (TextView) headerView.findViewById(R.id.txt_user);
-        Common.setSpanString("Hey",Common.currentUser.getName(),txt_user);
+        Common.setSpanString("Hey ",Common.currentUser.getName(),txt_user);
 
 
         countCartItem();
@@ -131,22 +134,33 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
     @Override
     public boolean onNavigationItemSelected(@NonNull MenuItem menuItem) {
         menuItem.setChecked(true);
+        DrawerLayout drawer = new DrawerLayout(this);
         drawer.closeDrawers();
         switch (menuItem.getItemId())
         {
             case R.id.nav_home:
-                navController.navigate(R.id.nav_home);
+                if(menuItem.getItemId() != menuClickId)
+                    navController.navigate( R.id.nav_home );
                 break;
             case R.id.nav_menu:
-                navController.navigate(R.id.nav_menu);
+                if(menuItem.getItemId() != menuClickId)
+                    navController.navigate( R.id.nav_menu );
                 break;
             case R.id.nav_cart:
-                navController.navigate(R.id.nav_cart);
+                if(menuItem.getItemId() != menuClickId)
+                    navController.navigate( R.id.nav_cart );
                 break;
+
+            case R.id.nav_view_orders:
+                if(menuItem.getItemId() != menuClickId)
+                    navController.navigate( R.id.nav_view_orders );
+                break;
+
             case R.id.nav_sign_out:
                 signOut();
                 break;
         }
+        menuClickId = menuItem.getItemId();
         return true;
     }
 
@@ -246,6 +260,7 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
                             if(snapshot.exists())
                             {
                                 Common.categorySelected = snapshot.getValue(CategoryModel.class);
+                                Common.categorySelected.setMenu_id(snapshot.getKey());
 
                                 //load food
                                 FirebaseDatabase.getInstance()
@@ -263,6 +278,7 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
                                                     for(DataSnapshot itemSnapShot:snapshot.getChildren())
                                                     {
                                                         Common.selectedFood = itemSnapShot.getValue(FoodModel.class);
+                                                        Common.selectedFood.setKey(itemSnapShot.getKey());
                                                     }
 
                                                     navController.navigate(R.id.nav_food_detail);
@@ -314,6 +330,7 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
                             if(snapshot.exists())
                             {
                                 Common.categorySelected = snapshot.getValue(CategoryModel.class);
+                                Common.categorySelected.setMenu_id(snapshot.getKey());
 
                                 //load food
                                 FirebaseDatabase.getInstance()
@@ -331,6 +348,7 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
                                                     for(DataSnapshot itemSnapShot:snapshot.getChildren())
                                                     {
                                                         Common.selectedFood = itemSnapShot.getValue(FoodModel.class);
+                                                        Common.selectedFood.setKey(itemSnapShot.getKey());
                                                     }
 
                                                     navController.navigate(R.id.nav_food_detail);
@@ -359,7 +377,8 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
 
                         @Override
                         public void onCancelled(@NonNull DatabaseError error) {
-
+                            dialog.dismiss();
+                            Toast.makeText( HomeActivity.this, ""+error.getMessage(), Toast.LENGTH_SHORT ).show();
                         }
                     });
         }
@@ -384,7 +403,7 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
                     public void onError(Throwable e) {
                         if(!e.getMessage().contains("query returned empty"))
                         {
-                            Toast.makeText(HomeActivity.this, "{COUNT CART}"+e.getMessage(), Toast.LENGTH_SHORT).show();
+                           // Toast.makeText(HomeActivity.this, "{COUNT CART}"+e.getMessage(), Toast.LENGTH_SHORT).show();
                         }
                         else
                             fab.setCount(0);
@@ -392,4 +411,20 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
                     }
                 });
     }
+
+    @Subscribe(sticky = true,threadMode = ThreadMode.MAIN)
+    public void countCartAgain(CounterCartEvent event)
+    {
+        if(event.isSuccess())
+        countCartItem();
+    }
+
+    @Subscribe(sticky = true,threadMode = ThreadMode.MAIN)
+    public void onMenuItemBack(MenuItemBack event)
+    {
+        menuClickId = -1;
+        if(getSupportFragmentManager().getBackStackEntryCount() > 0)
+            getSupportFragmentManager().popBackStack();
+    }
+
 }

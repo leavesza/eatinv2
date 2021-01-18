@@ -3,7 +3,7 @@ package com.eatin.eatinv2.Model;
 import java.util.List;
 
 public class CategoryModel {
-    private String menu_id,name,image;
+    private String menu_id, name, image;
     List<FoodModel> foods;
 
     public CategoryModel() {

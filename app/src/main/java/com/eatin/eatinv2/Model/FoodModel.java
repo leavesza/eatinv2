@@ -5,6 +5,7 @@ import java.util.List;
 public class FoodModel {
 
 
+    private String key;
     private String name,image,id,description;
     private Long price;
     private List<AddonModel> addon;
@@ -92,7 +93,6 @@ public class FoodModel {
     public void setSize(List<SizeModel> size) {
         this.size = size;
     }
-    private String key;
 
     public String getKey() {
         return key;

@@ -129,9 +129,9 @@ public class MainActivity extends AppCompatActivity {
         builder.setMessage("Please fill information");
 
         View itemView = LayoutInflater.from(this).inflate(R.layout.layout_register, null);
-        EditText edit_name = (EditText) itemView.findViewById(R.id.edit_name);
-        EditText edit_address = (EditText) itemView.findViewById(R.id.edit_address);
-        EditText edit_phone = (EditText) itemView.findViewById(R.id.edit_phone);
+        EditText edit_name = (EditText) itemView.findViewById(R.id.edt_name);
+        EditText edit_address = (EditText) itemView.findViewById(R.id.edt_address);
+        EditText edit_phone = (EditText) itemView.findViewById(R.id.edt_phone);
 
         //set
         edit_phone.setText(user.getPhoneNumber());

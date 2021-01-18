@@ -27,6 +27,11 @@
         android:name="com.eatin.eatinv2.ui.fooddetail.FoodDetailFragment"
         android:label="@string/menu_food_detail"
         tools:layout="@layout/fragment_food_detail" />
+    <fragment
+        android:id="@+id/nav_view_orders"
+        android:name="com.eatin.eatinv2.ui.foodlist.FoodListFragment"
+        android:label="@string/view_orders"
+        tools:layout="@layout/fragment_view_orders" />
 
     <fragment
         android:id="@+id/nav_cart"

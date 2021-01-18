@@ -21,8 +21,11 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.eatin.eatinv2.Adapter.MyCategoriesAdapter;
 import com.eatin.eatinv2.Common.Common;
 import com.eatin.eatinv2.Common.SpacesItemDecoration;
+import com.eatin.eatinv2.EventBus.MenuItemBack;
 import com.eatin.eatinv2.Model.PopularCategoryModel;
 import com.eatin.eatinv2.R;
+
+import org.greenrobot.eventbus.EventBus;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -86,5 +89,11 @@ public class MenuFragment extends Fragment {
         recycler_menu.setLayoutManager(layoutManager);
         recycler_menu.addItemDecoration(new SpacesItemDecoration(0));
 
+    }
+
+    @Override
+    public void onDestroy() {
+        EventBus.getDefault().postSticky(new MenuItemBack());
+        super.onDestroy();
     }
 }

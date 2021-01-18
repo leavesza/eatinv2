@@ -3,6 +3,7 @@ package com.eatin.eatinv2.ui.fooddetail;
 import android.content.DialogInterface;
 import android.os.Bundle;
 import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -34,6 +35,8 @@ import com.eatin.eatinv2.Database.CartDatabase;
 import com.eatin.eatinv2.Database.CartItem;
 import com.eatin.eatinv2.Database.LocalCartDataSource;
 import com.eatin.eatinv2.EventBus.CounterCartEvent;
+import com.eatin.eatinv2.EventBus.MenuItemBack;
+import com.eatin.eatinv2.Model.AddonModel;
 import com.eatin.eatinv2.Model.CommentModel;
 import com.eatin.eatinv2.Model.FoodModel;
 import com.eatin.eatinv2.Model.SizeModel;
@@ -42,6 +45,7 @@ import com.eatin.eatinv2.ui.comments.CommentFragment;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.bottomsheet.BottomSheetDialog;
+import com.google.android.material.chip.Chip;
 import com.google.android.material.chip.ChipGroup;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.database.DataSnapshot;
@@ -53,6 +57,7 @@ import com.google.gson.Gson;
 
 import org.greenrobot.eventbus.EventBus;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -70,40 +75,73 @@ import io.reactivex.schedulers.Schedulers;
 public class FoodDetailFragment extends Fragment {
 
     private FoodDetailViewModel foodDetailViewModel;
-
     private Unbinder unbinder;
     private android.app.AlertDialog waitingDialog;
-    private BottomSheetDialog addBottomSheetDialog;
-
+    private BottomSheetDialog addonBottomSheetDialog;
     private CartDataSource cartDataSource;
     private CompositeDisposable compositeDisposable = new CompositeDisposable();
 
+    ChipGroup chip_group_addon;
+    EditText edt_search;
 
-
-    @BindView(R.id.img_food)
+    @BindView( R.id.img_food )
     ImageView img_food;
-    @BindView(R.id.btnCart)
+    @BindView( R.id.btnCart )
     CounterFab btnCart;
-    @BindView(R.id.btn_rating)
+    @BindView( R.id.btn_rating )
     FloatingActionButton btn_rating;
-    @BindView(R.id.food_name)
+    @BindView( R.id.food_name )
     TextView food_name;
-    @BindView(R.id.food_description)
+    @BindView( R.id.food_description )
     TextView food_description;
-    @BindView(R.id.food_price)
+    @BindView( R.id.food_price )
     TextView food_price;
-    @BindView(R.id.number_button)
+    @BindView( R.id.number_button)
     ElegantNumberButton numberButton;
-    @BindView(R.id.ratingBar)
+    @BindView( R.id.ratingBar )
     RatingBar ratingBar;
-    @BindView(R.id.btnShowComment)
+    @BindView( R.id.btnShowComment )
     Button btnShowComment;
-    @BindView(R.id.rdi_group_size)
+    @BindView( R.id.rdi_group_size )
     RadioGroup rdi_group_size;
-    @BindView(R.id.img_add_addon)
-    ImageView img_add_addon;
-    @BindView(R.id.chip_group_user_selected_addon)
+    @BindView( R.id.img_add_addon )
+    ImageView img_add_on;
+    @BindView( R.id.chip_group_user_selected_addon )
     ChipGroup chip_group_user_selected_addon;
+
+
+    @OnClick(R.id.img_add_addon)
+    void onAddonClick(){
+        if(Common.selectedFood.getAddon() != null){
+            displayAddonList();
+            addonBottomSheetDialog.show();
+        }
+    }
+
+    private void displayAddonList() {
+        if(Common.selectedFood.getAddon().size() > 0){
+            chip_group_addon.clearCheck();
+            chip_group_addon.removeAllViews();
+            edt_search.addTextChangedListener((TextWatcher) this);
+
+            //Add all view
+            for(AddonModel addonModel:Common.selectedFood.getAddon()){
+
+                Chip chip = (Chip)getLayoutInflater().inflate( R.layout.layout_addon_item, null );
+                chip.setText( new StringBuilder( addonModel.getName() ).append( "(+R" )
+                        .append( addonModel.getPrice() ).append( ")" ));
+                chip.setOnCheckedChangeListener( (buttonView, isChecked) -> {
+                    if(isChecked){
+                        if(Common.selectedFood.getUserSelectedAddon() == null)
+                            Common.selectedFood.setUserSelectedAddon( new ArrayList<>(  ) );
+                        Common.selectedFood.getUserSelectedAddon().add( addonModel );
+                    }
+                } );
+                chip_group_addon.addView( chip );
+
+            }
+        }
+    }
 
 
     @OnClick(R.id.btnCart)
@@ -119,6 +157,11 @@ public class FoodDetailFragment extends Fragment {
         cartItem.setFoodPrice(Double.valueOf(String.valueOf(Common.selectedFood.getPrice())));
         cartItem.setFoodQuantity(Integer.valueOf(numberButton.getNumber()));
         cartItem.setFoodExtraPrice(Common.calculateExtraPrice(Common.selectedFood.getUserSelectedSize(),Common.selectedFood.getUserSelectedAddon()));
+        if(Common.selectedFood.getUserSelectedAddon() != null)
+            cartItem.setFoodAddon( new Gson().toJson( Common.selectedFood.getUserSelectedAddon() ) );
+        else
+            cartItem.setFoodAddon( "Default" );
+
         if(Common.selectedFood.getUserSelectedSize() != null)
             cartItem.setFoodSize(new Gson().toJson(Common.selectedFood.getUserSelectedSize()));
         else
@@ -277,9 +320,39 @@ public class FoodDetailFragment extends Fragment {
 
         waitingDialog = new SpotsDialog.Builder().setCancelable(false).setContext(getContext()).build();
 
-        addBottomSheetDialog = new BottomSheetDialog(getContext(),R.style.DialogStyle);
+        addonBottomSheetDialog = new BottomSheetDialog(getContext(),R.style.DialogStyle);
+
+        View layout_addon_display = getLayoutInflater().inflate( R.layout.layout_addon_display, null );
+        chip_group_addon = (ChipGroup) layout_addon_display.findViewById( R.id.chip_group_addon );
+        edt_search = (EditText)layout_addon_display.findViewById( R.id.edt_search );
+        addonBottomSheetDialog.setContentView( layout_addon_display );
+
+        addonBottomSheetDialog.setOnDismissListener( dialog -> {
+            displayUserSelectedAddon();
+            calculateTotalPrice();
+        } );
 
 
+    }
+
+    private void displayUserSelectedAddon() {
+        if(Common.selectedFood.getUserSelectedAddon() != null && Common.selectedFood.getUserSelectedAddon().size() > 0){
+            chip_group_user_selected_addon.removeAllViews();
+            for(AddonModel addonModel: Common.selectedFood.getUserSelectedAddon()){ // Add all avaiable addon to list
+                Chip chip = (Chip) getLayoutInflater().inflate( R.layout.layout_chip_with_delete_icon, null );
+                chip.setText( new StringBuilder( addonModel.getName() ).append( "(+R" )
+                        .append( addonModel.getPrice() ).append( ")" ));
+                chip.setClickable( false );
+                chip.setOnCloseIconClickListener( v -> {
+                    //Remove when user select delete
+                    chip_group_user_selected_addon.removeView( v );
+                    Common.selectedFood.getUserSelectedAddon().remove( addonModel );
+                    calculateTotalPrice();
+                } );
+                chip_group_user_selected_addon.addView( chip );
+            }
+        }else
+            chip_group_user_selected_addon.removeAllViews();
     }
 
     private void submitRatingToFirebase(CommentModel commentModel) {
@@ -367,7 +440,7 @@ public class FoodDetailFragment extends Fragment {
         food_price.setText(new StringBuilder(foodModel.getPrice().toString()));
 
         if(foodModel.getRatingValue() != null)
-           ratingBar.setRating(foodModel.getRatingValue().floatValue());
+           ratingBar.setRating(foodModel.getRatingValue().floatValue() / foodModel.getRatingCount());
 
         ((AppCompatActivity)getActivity())
                 .getSupportActionBar()
@@ -403,19 +476,32 @@ public class FoodDetailFragment extends Fragment {
     }
 
     private void calculateTotalPrice() {
-        double totalPrice = Double.parseDouble(Common.selectedFood.getPrice().toString()),displayPrice=0.0;
-        //size
-        totalPrice = Double.parseDouble(Common.selectedFood.getUserSelectedSize().getPrice().toString());
+        double totalPrice = Double.parseDouble( Common.selectedFood.getPrice().toString() ), displayPrice = 0.0;
+        //Addon
+        if(Common.selectedFood.getUserSelectedAddon() != null && Common.selectedFood.getUserSelectedAddon().size() >0)
+            for(AddonModel addonModel:Common.selectedFood.getUserSelectedAddon())
+                totalPrice+=Double.parseDouble( addonModel.getPrice().toString() );
 
-        displayPrice = totalPrice * (Integer.parseInt(numberButton.getNumber()));
-        displayPrice = Math.round(displayPrice*100.0/100.0);
+        //SIze
+        if(Common.selectedFood.getUserSelectedSize() != null)
+            totalPrice += Double.parseDouble( Common.selectedFood.getUserSelectedSize().getPrice().toString() );
+        displayPrice = totalPrice * (Integer.parseInt( numberButton.getNumber() ));
+        displayPrice = Math.round( displayPrice * 100.0/100.0 );
+        food_price.setText( new StringBuilder("").append( Common.formatPrice(displayPrice) ).toString() );
 
-        food_price.setText(new StringBuilder("").append(Common.formatPrice(displayPrice)).toString());
     }
+
+
 
     @Override
     public void onStop() {
         compositeDisposable.clear();
         super.onStop();
+    }
+
+    @Override
+    public void onDestroy() {
+        EventBus.getDefault().postSticky(new MenuItemBack());
+        super.onDestroy();
     }
 }

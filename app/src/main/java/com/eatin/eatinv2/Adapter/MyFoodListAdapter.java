@@ -60,11 +60,9 @@ public class MyFoodListAdapter extends RecyclerView.Adapter<MyFoodListAdapter.My
 
     @Override
     public void onBindViewHolder(@NonNull MyViewHolder holder, int position) {
-        Glide.with(context).load(foodModelList.get(position).getImage()).into(holder.img_food_image);
-        holder.txt_food_price.setText(new StringBuilder("R")
-                .append(foodModelList.get(position).getPrice()));
-        holder.txt_food_name.setText(new StringBuilder("")
-                .append(foodModelList.get(position).getName()));
+        Glide.with( context ).load( foodModelList.get( position ).getImage()).into( holder.img_food_image );
+        holder.txt_food_price.setText( new StringBuilder( "R" ).append( foodModelList.get( position ).getPrice() ) );
+        holder.txt_food_name.setText( new StringBuilder( "" ).append( foodModelList.get( position ).getName() ) );
 
         //Event
         holder.setListener((view, pos) -> {
@@ -81,7 +79,7 @@ public class MyFoodListAdapter extends RecyclerView.Adapter<MyFoodListAdapter.My
             cartItem.setFoodId(foodModelList.get(position).getId());
             cartItem.setFoodName(foodModelList.get(position).getName());
             cartItem.setFoodImage(foodModelList.get(position).getImage());
-            cartItem.setFoodPrice(Double.valueOf(String.valueOf(foodModelList.get(position).getPrice())));
+            cartItem.setFoodPrice( Double.parseDouble( String.valueOf( foodModelList.get( position ).getPrice() ) ) );
             cartItem.setFoodQuantity(1);
             cartItem.setFoodExtraPrice(0.0);
             cartItem.setFoodAddon("Default");

@@ -61,7 +61,7 @@ public class HomeViewModel extends ViewModel implements IPopularCallbackListener
 
             @Override
             public void onCancelled(@NonNull DatabaseError error) {
-
+                bestDealCallbackListener.onBestDealLoadFailed(error.getMessage());
             }
         });
     }
